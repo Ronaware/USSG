@@ -1,0 +1,20 @@
+﻿<Properties StartupItem="Assembly-CSharp.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\UI\WeaponSelectWheel.cs">
+    <Files>
+      <File FileName="Assets\Scripts\Characters\Enemy\EnemyMovement.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Characters\HealthManager.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Weapons\Gun.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Characters\Player\PlayerWeaponSystem.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Characters\Enemy\EnemyWeaponSystem.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Weapons\Equipment.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\UI\PlayerUI.cs" Line="79" Column="26" />
+      <File FileName="Assets\Scripts\UI\WeaponSelectWheel.cs" Line="46" Column="29" />
+      <File FileName="Assets\Scripts\Characters\Player\SwipeManager.cs" Line="23" Column="57" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
