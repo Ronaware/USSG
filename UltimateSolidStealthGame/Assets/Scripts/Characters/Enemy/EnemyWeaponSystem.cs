@@ -9,18 +9,15 @@ public class EnemyWeaponSystem : MonoBehaviour {
 	[SerializeField]
 	float fireWaitTime = 2.0f;
 
-	EnemySight sight;
-	GameObject player;
-	EnemyMovement movement;
+	bool firing;
+
+	EnemyManager manager;
 	GameObject gunInstance;
 	Gun gun;
-	bool firing;
 
 	// Use this for initialization
 	void Start () {
-		sight = GetComponent<EnemySight> ();
-		player = GameObject.FindGameObjectWithTag ("Player");
-		movement = GetComponent<EnemyMovement> ();
+		manager = GetComponent<EnemyManager> ();
 		if (gunPrefab) {
 			gunInstance = GameObject.Instantiate (gunPrefab, transform);
 			if (gunInstance != null) {
@@ -41,12 +38,12 @@ public class EnemyWeaponSystem : MonoBehaviour {
 
 	public void FireWeapon() {
 		if (!firing) {
-			if (sight && player && movement && gun) {
+			if (manager.Sight && manager.Player && manager.Movement && gun) {
 				Vector3 zeroAngleVec = new Vector3 (1.0f, 0.0f, 0.0f);
-				if (movement.Alerted == true) {
+				if (manager.Movement.Alerted == true) {
 					if (Vector3.Angle (transform.forward.normalized, zeroAngleVec) % 90.0f == 0.0f) {
 						RaycastHit hit;
-						if (Physics.Raycast (transform.position, transform.forward, out hit, Mathf.Infinity, sight.IgnoreEnemiesLayer)) {
+						if (Physics.Raycast (transform.position, transform.forward, out hit, Mathf.Infinity, manager.Sight.IgnoreEnemiesLayer)) {
 							if (hit.transform.CompareTag ("Player") == true) {
 								firing = true;
 								gun.UseEquipment ();

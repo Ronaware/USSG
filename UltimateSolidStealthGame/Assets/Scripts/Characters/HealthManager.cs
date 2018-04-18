@@ -7,20 +7,30 @@ public class HealthManager : MonoBehaviour {
 	[SerializeField]
 	float health;
 
+	CharacterManager manager;
+
+	public float Health {
+		get { return health; }
+	}
+
 	// Use this for initialization
 	void Start () {
-		
+		manager = GetComponent<CharacterManager> ();
 	}
 	
 	void OnCollisionEnter(Collision collision) {
 		if (collision.gameObject.CompareTag ("Bullet") == true) {
 			Bullet bullet = collision.gameObject.GetComponent<Bullet> ();
 			if (bullet != null && bullet.Owner != gameObject.tag) {
-				health--;
-				if (health <= 0) {
-					//turn off movement (kill()), make both movements inherit from base class
-				}
+				Attack (bullet.Damage);
 			}
+		}
+	}
+
+	public void Attack(float damage) {
+		health = (health > 0.0f) ? health - damage : 0.0f;
+		if (health == 0.0f) {
+			manager.Kill ();
 		}
 	}
 }

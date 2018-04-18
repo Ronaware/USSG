@@ -9,10 +9,11 @@ public class PlayerWeaponSystem : MonoBehaviour {
 	List<GameObject> equipmentPrefabs;
 
 	List<GameObject> equipmentInstances;
-	PlayerUI ui;
 	string currEquipmentType;
 	GameObject currEquipment;
 	Equipment equipment;
+
+	PlayerManager manager;
 
 	public string CurrEquipmentType {
 		get { return currEquipmentType; }
@@ -27,21 +28,16 @@ public class PlayerWeaponSystem : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		equipmentInstances = new List<GameObject> ();
+		manager = GetComponent<PlayerManager> ();
 		GameObject temp;
 		foreach (GameObject g in equipmentPrefabs) {
 			temp = GameObject.Instantiate (g, transform);
 			temp.gameObject.SetActive (false);
 			equipmentInstances.Add (temp);
 		}
-		temp = GameObject.FindGameObjectWithTag ("UI");
-		if (temp) {
-			ui = temp.GetComponent<PlayerUI> ();
-			if (ui) {
-				for (int i = 0; i < equipmentInstances.Count; i++) {
-					GameObject g = equipmentInstances [i];
-					ui.AddEquipment (ref g);
-				}
-			}
+		for (int i = 0; i < equipmentInstances.Count; i++) {
+			GameObject g = equipmentInstances [i];
+			manager.Ui.AddEquipment (ref g);
 		}
 	}
 
@@ -66,7 +62,7 @@ public class PlayerWeaponSystem : MonoBehaviour {
 				currEquipment = g;
 				equipment = currEquipment.GetComponent<Equipment> ();
 				currEquipmentType = equipment.EquipmentType;
-				ui.UpdateUIOnGunSwap (equipment, currEquipmentType);
+				manager.Ui.UpdateUIOnGunSwap (equipment, currEquipmentType);
 				break;
 			}
 		}
@@ -76,12 +72,6 @@ public class PlayerWeaponSystem : MonoBehaviour {
 		GameObject temp = GameObject.Instantiate (newPrefab, transform);
 		temp.gameObject.SetActive (false);
 		equipmentInstances.Add (temp);
-		GameObject temp2 = GameObject.FindGameObjectWithTag ("UI");
-		if (temp2) {
-			ui = temp2.GetComponent<PlayerUI> ();
-			if (ui) {
-				ui.AddEquipment (ref temp);
-			}
-		}
+		manager.Ui.AddEquipment (ref temp);
 	}
 }

@@ -1,0 +1,7 @@
+*.*proj
+
+Library/*
+
+obj/*
+
+*.sln

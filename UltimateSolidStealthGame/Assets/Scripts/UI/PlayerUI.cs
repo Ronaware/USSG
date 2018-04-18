@@ -16,8 +16,7 @@ public class PlayerUI : MonoBehaviour {
 	WeaponSelectWheel weaponWheel;
 	List<GameObject> equipmentInstanceList;
 	float pressTime;
-	PlayerWeaponSystem playerWeaponSystem;
-	HealthManager playerHealth;
+	PlayerManager manager;
 	string currEquipmentType;
 	Equipment currEquipment;
 	bool wheelDisplayed;
@@ -25,15 +24,14 @@ public class PlayerUI : MonoBehaviour {
 
 	void Awake () {
 		equipmentInstanceList = new List<GameObject> ();
-		GameObject temp = GameObject.FindGameObjectWithTag ("Player");
-		if (temp) {
-			playerWeaponSystem = temp.GetComponent<PlayerWeaponSystem> ();
-			playerHealth = temp.GetComponent<HealthManager> ();
-			if (playerWeaponSystem) {
-				currEquipmentType = playerWeaponSystem.CurrEquipmentType;
-				currEquipment = playerWeaponSystem.Equipment;
-				temp = GameObject.Instantiate (weaponWheelPrefab);
-				temp.transform.parent = gameObject.transform;
+		GameObject player = GameObject.FindGameObjectWithTag ("Player");
+		if (player) {
+			manager = player.GetComponent<PlayerManager> ();
+			if (manager) {
+				currEquipmentType = manager.WeaponSystem.CurrEquipmentType;
+				currEquipment = manager.WeaponSystem.Equipment;
+				GameObject temp = GameObject.Instantiate (weaponWheelPrefab);
+				temp.transform.SetParent(gameObject.transform, false);
 				RectTransform rect = temp.GetComponent<RectTransform> ();
 				rect.position = new Vector3 (Screen.width / 2.0f, Screen.height / 2.0f, 0.0f);
 				rect.localScale = Vector3.one;
@@ -44,8 +42,10 @@ public class PlayerUI : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (currEquipment) {
+		if (currEquipment && currEquipment.Count != -1) {
 			counter.text = "x" + currEquipment.Count.ToString ();
+		} else {
+			counter.text = "";
 		}
 		if (primaryPressed == true) {
 			float time = Time.time - pressTime;
@@ -64,10 +64,10 @@ public class PlayerUI : MonoBehaviour {
 		Button button = newEquipment.GetComponent<Button> ();
 		Image image = newEquipment.GetComponent<Image> ();
 		RectTransform rect = newEquipment.GetComponent<RectTransform> ();
-		button.onClick.AddListener (delegate{playerWeaponSystem.SwapEquipment(equipment.EquipmentType);});
+		button.onClick.AddListener (delegate{manager.WeaponSystem.SwapEquipment(equipment.EquipmentType);});
 		image.sprite = equipment.Icon;
 		weaponWheel.AddButton (newEquipment);
-		newEquipment.transform.parent = weaponWheel.transform;
+		newEquipment.transform.SetParent(weaponWheel.transform, false);
 		rect.localPosition = Vector3.one;
 		rect.localScale = Vector3.one;
 		newEquipment.SetActive (false);
@@ -85,7 +85,7 @@ public class PlayerUI : MonoBehaviour {
 
 	public void OnPrimaryUp() {
 		if (primaryPressed) {
-			playerWeaponSystem.UseEquipped ();
+			manager.WeaponSystem.UseEquipped ();
 			primaryPressed = false;
 		}
 	}
