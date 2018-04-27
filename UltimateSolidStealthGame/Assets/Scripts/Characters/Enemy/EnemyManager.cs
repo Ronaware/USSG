@@ -7,6 +7,7 @@ public class EnemyManager : CharacterManager {
 	EnemyMovement movement;
 	EnemySight sight;
 	EnemyWeaponSystem weaponSystem;
+	EnemyDistraction distraction;
 	GameObject player;
 
 	public EnemyMovement Movement {
@@ -21,12 +22,17 @@ public class EnemyManager : CharacterManager {
 	public GameObject Player {
 		get { return player; }
 	}
+	public EnemyDistraction Distraction {
+		get { return distraction; }
+
+	}
 
 	protected override void Awake () {
 		base.Awake ();
 		movement = GetComponent<EnemyMovement> ();
 		sight = GetComponent<EnemySight> ();
 		weaponSystem = GetComponent<EnemyWeaponSystem> ();
+		distraction = GetComponent<EnemyDistraction>();
 		player = GameObject.FindGameObjectWithTag ("Player");
 	}
 	
@@ -40,6 +46,7 @@ public class EnemyManager : CharacterManager {
 		sight.enabled = false;
 		weaponSystem.enabled = false;
 		health.enabled = false;
+		distraction.enabled = false;
 		movement.Nav.enabled = false;
 		GetComponent<Collider> ().enabled = false;
 	}

@@ -2,27 +2,34 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemySight : MonoBehaviour {
+public abstract class EnemySight : MonoBehaviour {
 
 	[SerializeField]
-	int sightDistance = 6;
+	protected int sightDistance = 6;
 	[SerializeField]
-	int FOV = 30;
+	protected int FOV = 45;
 	[SerializeField]
-	int numFramesToResetPath = 1;
+	protected int alertedFOV = 150;
+	[SerializeField]
+	protected int numFramesToResetPath = 10;
+	[SerializeField]
+	protected bool alerted;
 
-	int frames;
-	PlayerMovement playerMovement;
-	Graph graph;
-	EnemyManager manager;
-	int ignoreEnemiesLayer;
+	protected int frames;
+	protected PlayerMovement playerMovement;
+	protected EnemyManager manager;
+	protected int ignoreEnemiesLayer;
+	protected List<int> pathToPlayer;
 
 	public int IgnoreEnemiesLayer {
 		get { return ignoreEnemiesLayer; }
 	}
+	public bool Alerted {
+		get { return alerted; }
+		set { alerted = value; }
+	}
 		
-	// Use this for initialization
-	void Start () {
+	protected virtual void Start () {
 		frames = 0;
 		ignoreEnemiesLayer = 1 << LayerMask.NameToLayer ("Enemy");
 		ignoreEnemiesLayer = ~ignoreEnemiesLayer;
@@ -30,39 +37,18 @@ public class EnemySight : MonoBehaviour {
 		if (temp) {
 			playerMovement = temp.GetComponent<PlayerMovement> ();
 		}
-		temp = GameObject.FindGameObjectWithTag ("Graph");
-		if (temp) {
-			graph = temp.GetComponent<Graph> ();
-		}
 		manager = gameObject.GetComponent<EnemyManager> ();
+		pathToPlayer = new List<int> ();
 	}
-	
-	// Update is called once per frame
-	void Update () {
-		frames = (frames + 1) % numFramesToResetPath;
-		if (playerMovement != null && manager.Movement != null) {
-			if (frames == (numFramesToResetPath - 1)) {
-				Vector3 toPlayer = playerMovement.transform.position - gameObject.transform.position;
-				Vector3 front = gameObject.transform.forward;
-				float angle = Vector3.Angle (front.normalized, toPlayer.normalized);
-				if (angle <= FOV && toPlayer.magnitude <= sightDistance) {
-					RaycastHit hit;
-					if (Physics.Raycast(transform.position, toPlayer, out hit, Mathf.Infinity, ignoreEnemiesLayer)) {
-						if (hit.transform.CompareTag("Player") == true) {
-							List<int> pathToPlayer = graph.FindShortestPath (manager.Movement.CurrVertexIndex, playerMovement.CurrVertexIndex);
-							if (pathToPlayer != null) {
-								
-								foreach (int i in pathToPlayer) {
-									Debug.DrawLine (graph.vertices [i].position, graph.vertices [i].position + Vector3.up, Color.red, 0.5f);
-								}
 
-								manager.Movement.Alerted = true;
-								manager.Movement.Path = pathToPlayer;
-							}
-						}
-					}
-				}
-			}
+	protected virtual void Update() {
+		CheckSightline ();
+		if (alerted && pathToPlayer.Count == 0) {
+			alerted = false;
+			manager.Movement.PauseMovement ();
 		}
 	}
+
+	protected abstract void CheckSightline ();
+
 }

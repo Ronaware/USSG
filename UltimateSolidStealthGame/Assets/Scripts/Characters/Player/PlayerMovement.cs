@@ -17,9 +17,16 @@ public class PlayerMovement : MonoBehaviour {
 	UnityEngine.AI.NavMeshAgent nav;
 
 	public int CurrVertexIndex {
-		get {
-			return currVertexIndex;
-		}
+		get { return currVertexIndex; }
+	}
+	public Vector3 Movement {
+		get { return movement; }
+	}
+	public UnityEngine.AI.NavMeshAgent Nav {
+		get { return nav; }
+	}
+	public Enums.directions Direction {
+		get { return direction; }
 	}
 
 	// Use this for initialization
@@ -28,12 +35,22 @@ public class PlayerMovement : MonoBehaviour {
 		manager = GetComponent<PlayerManager> ();
 		moveAmount = manager.Graph.VertexDistance;
 		nav = GetComponent<UnityEngine.AI.NavMeshAgent> ();
-		transform.position.Set(transform.position.x, 0.0f, transform.position.z);
+		transform.position = new Vector3(transform.position.x, 0.0f, transform.position.z);
 		currVertexIndex = manager.Graph.GetIndexFromPosition(transform.position);
 		lastVertexIndex = currVertexIndex;
 		playerName = gameObject.name;
 		manager.Graph.vertices [currVertexIndex].occupiedBy = playerName;
 		manager.Graph.vertices [currVertexIndex].occupied = true;
+		Vector3 forwardDir = transform.forward.normalized;
+		if (forwardDir == Vector3.forward) {
+			direction = Enums.directions.up;
+		} else if (forwardDir == Vector3.back) {
+			direction = Enums.directions.down;
+		} else if (forwardDir == Vector3.left) {
+			direction = Enums.directions.left;
+		} else if (forwardDir == Vector3.right) {
+			direction = Enums.directions.right;
+		}
 	}
 
 	void Update() {  
@@ -54,6 +71,7 @@ public class PlayerMovement : MonoBehaviour {
 					manager.Graph.vertices [currVertexIndex].occupiedBy = playerName;
 				}
 				if (movement != Vector3.zero) {
+					transform.rotation = Quaternion.LookRotation(movement);
 					switch (direction) {
 					case Enums.directions.left:
 						if (manager.Graph.vertices [currVertexIndex - 1] != null) {
@@ -131,7 +149,6 @@ public class PlayerMovement : MonoBehaviour {
             movement.Set(0.0f, 0.0f, -moveAmount);
 			break;
 		}
-		transform.rotation = Quaternion.LookRotation(movement);
 	}
 
 	public void StopMoving() {

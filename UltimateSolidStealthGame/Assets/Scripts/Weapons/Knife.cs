@@ -11,7 +11,7 @@ public class Knife : Equipment {
 
 	// Use this for initialization
 	void Start () {
-		
+		count = -1;
 	}
 
 	public override void UseEquipment () {

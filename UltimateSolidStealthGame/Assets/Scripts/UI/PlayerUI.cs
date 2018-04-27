@@ -39,20 +39,21 @@ public class PlayerUI : MonoBehaviour {
 			}
 		}
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
-		if (currEquipment && currEquipment.Count != -1) {
-			counter.text = "x" + currEquipment.Count.ToString ();
-		} else {
-			counter.text = "";
-		}
-		if (primaryPressed == true) {
-			float time = Time.time - pressTime;
-			if (time > 0.35f) {
-				primaryPressed = false;
-				weaponWheel.DisplayWheel();
-				wheelDisplayed = true;
+		if (currEquipment) {
+			if (currEquipment.Count >= 0) {
+				counter.text = "x" + currEquipment.Count.ToString ();
+			} else if (currEquipment.Count == -1) {
+				counter.text = "";
+			}
+			if (primaryPressed) {
+				float time = Time.time - pressTime;
+				if (time > 0.5f) {
+					primaryPressed = false;
+					weaponWheel.DisplayWheel();
+					wheelDisplayed = true;
+				}
 			}
 		}
 	}

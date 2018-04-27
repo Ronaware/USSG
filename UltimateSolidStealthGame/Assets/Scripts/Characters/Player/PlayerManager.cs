@@ -7,6 +7,7 @@ public class PlayerManager : CharacterManager {
 	PlayerMovement movement;
 	PlayerWeaponSystem weaponSystem;
 	PlayerUI ui;
+	SwipeManager swipe;
 
 	public PlayerMovement Movement {
 		get { return movement; }
@@ -22,6 +23,7 @@ public class PlayerManager : CharacterManager {
 		base.Awake ();
 		movement = GetComponent<PlayerMovement> ();
 		weaponSystem = GetComponent<PlayerWeaponSystem> ();
+		swipe = GetComponent<SwipeManager> ();
 		GameObject tempUI = GameObject.FindGameObjectWithTag ("UI");
 		if (tempUI) {
 			ui = tempUI.GetComponent<PlayerUI> ();

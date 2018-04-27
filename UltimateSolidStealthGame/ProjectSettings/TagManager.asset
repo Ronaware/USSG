@@ -18,12 +18,12 @@ TagManager:
   - 
   - 
   - Enemy
-  - Bullet
-  - 
-  - 
-  - 
-  - 
-  - 
+  - EnemyWeapon
+  - PlayerWeapon
+  - Player
+  - IcePlayer
+  - Smoke
+  - Laser
   - 
   - 
   - 

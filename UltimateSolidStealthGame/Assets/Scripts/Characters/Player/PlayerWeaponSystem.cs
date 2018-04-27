@@ -31,14 +31,9 @@ public class PlayerWeaponSystem : MonoBehaviour {
 		manager = GetComponent<PlayerManager> ();
 		GameObject temp;
 		foreach (GameObject g in equipmentPrefabs) {
-			temp = GameObject.Instantiate (g, transform);
-			temp.gameObject.SetActive (false);
-			equipmentInstances.Add (temp);
+			AddEquipment(g);
 		}
-		for (int i = 0; i < equipmentInstances.Count; i++) {
-			GameObject g = equipmentInstances [i];
-			manager.Ui.AddEquipment (ref g);
-		}
+		SwapEquipment ("Knife");
 	}
 
 	void OnCollisionEnter(Collision collision) {
@@ -70,6 +65,7 @@ public class PlayerWeaponSystem : MonoBehaviour {
 
 	public void AddEquipment(GameObject newPrefab) {
 		GameObject temp = GameObject.Instantiate (newPrefab, transform);
+		temp.layer = LayerMask.NameToLayer ("PlayerWeapon");
 		temp.gameObject.SetActive (false);
 		equipmentInstances.Add (temp);
 		manager.Ui.AddEquipment (ref temp);

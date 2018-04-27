@@ -14,13 +14,16 @@ public class EnemyWeaponSystem : MonoBehaviour {
 	EnemyManager manager;
 	GameObject gunInstance;
 	Gun gun;
+	Renderer renderer;
 
 	// Use this for initialization
 	void Start () {
 		manager = GetComponent<EnemyManager> ();
+		renderer = GetComponent<Renderer> ();
 		if (gunPrefab) {
 			gunInstance = GameObject.Instantiate (gunPrefab, transform);
 			if (gunInstance != null) {
+				gunInstance.layer = LayerMask.NameToLayer ("EnemyWeapon");
 				gunInstance.transform.localPosition = Vector3.zero;
 				gunInstance.transform.localRotation = Quaternion.identity;
 				gunInstance.transform.localScale = Vector3.one;
@@ -37,10 +40,10 @@ public class EnemyWeaponSystem : MonoBehaviour {
 	}
 
 	public void FireWeapon() {
-		if (!firing) {
+		if (!firing && renderer.isVisible) {
 			if (manager.Sight && manager.Player && manager.Movement && gun) {
 				Vector3 zeroAngleVec = new Vector3 (1.0f, 0.0f, 0.0f);
-				if (manager.Movement.Alerted == true) {
+				if (manager.Sight.Alerted) {
 					if (Vector3.Angle (transform.forward.normalized, zeroAngleVec) % 90.0f == 0.0f) {
 						RaycastHit hit;
 						if (Physics.Raycast (transform.position, transform.forward, out hit, Mathf.Infinity, manager.Sight.IgnoreEnemiesLayer)) {

@@ -24,14 +24,18 @@ public class SwipeManager : MonoBehaviour {
 				Touch touch = Input.GetTouch (0);
 				switch (touch.phase) {
 				case TouchPhase.Began:
-					playerMovement.StopMoving ();
+					//playerMovement.StopMoving ();
 					touchStart = touch.position;
-					moveDir = Vector2.zero;
+					//moveDir = Vector2.zero;
 					break;
 				case TouchPhase.Moved:
 					moveDir = touch.position - touchStart;
 					touchStart = touch.position;
 					MoveInDirection (moveDir);
+					break;
+				case TouchPhase.Ended:
+					moveDir = Vector2.zero;
+					playerMovement.StopMoving ();
 					break;
 				}
 			}
@@ -55,8 +59,8 @@ public class SwipeManager : MonoBehaviour {
 					playerMovement.MoveUntilStop (Enums.directions.down);
 				}
 			}
-		} else {
-			playerMovement.StopMoving ();
-		}
+		} //else {
+			//playerMovement.StopMoving ();
+		//}
 	}
 }

@@ -102,13 +102,13 @@ public class Graph : MonoBehaviour{
 				}
 			}
 		}
-		return null;
+		return new List<int> ();
 	}
 
 	public int GetIndexFromPosition(Vector3 pos) {
 		foreach (Vertex v in vertices) {
 			if (v != null) {
-				if (v.position.x == pos.x && v.position.z == pos.z) {
+				if (Mathf.Approximately(v.position.x, pos.x) && Mathf.Approximately(v.position.z, pos.z)) {
 					return v.index;
 				}
 			}

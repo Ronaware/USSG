@@ -21,7 +21,7 @@ public class HealthManager : MonoBehaviour {
 	void OnCollisionEnter(Collision collision) {
 		if (collision.gameObject.CompareTag ("Bullet") == true) {
 			Bullet bullet = collision.gameObject.GetComponent<Bullet> ();
-			if (bullet != null && bullet.Owner != gameObject.tag) {
+			if (bullet != null) {
 				Attack (bullet.Damage);
 			}
 		}

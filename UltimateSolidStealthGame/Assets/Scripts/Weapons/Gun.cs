@@ -20,7 +20,6 @@ public class Gun : Equipment {
 	[SerializeField]
 	int bulletsLeft;
 
-
 	public float Damage {
 		get { return damage; }
 	}
@@ -28,7 +27,6 @@ public class Gun : Equipment {
 		get { return bulletsLeft; }
 		set { bulletsLeft = value; }
 	}
-
 
 	bool firing = false;
 
@@ -54,8 +52,8 @@ public class Gun : Equipment {
 				Rigidbody rb = firedBullet.GetComponent<Rigidbody> ();
 				Bullet b = firedBullet.GetComponent<Bullet> ();
 				if (rb && b) {
-					b.Owner = gameObject.tag;
 					b.Damage = damage;
+					firedBullet.layer = gameObject.layer;
 					rb.velocity = parent.forward * bulletSpeed;
 					if (bulletsLeft > 0) {
 						bulletsLeft--;

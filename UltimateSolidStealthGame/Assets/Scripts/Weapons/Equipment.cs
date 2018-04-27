@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Equipment : MonoBehaviour {
+public abstract class Equipment : MonoBehaviour {
 
 	[SerializeField]
 	string equipmentType;
@@ -21,13 +21,6 @@ public class Equipment : MonoBehaviour {
 	public Sprite Icon {
 		get { return icon; }
 	}
-
-	// Use this for initialization
-	void Start () {
-		
-	}
 	
-	public virtual void UseEquipment () {
-
-	}
+	public abstract void UseEquipment ();
 }
