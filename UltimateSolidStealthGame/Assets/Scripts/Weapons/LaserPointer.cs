@@ -17,15 +17,15 @@ public class LaserPointer : Equipment {
 	LineRenderer laser;
 	bool turnedOn;
 
-	// Use this for initialization
-	void Start () {
+	void Awake () {
+		base.Awake ();
 		count = -1;
 		ignoreLayers = 1 << LayerMask.NameToLayer ("Default");
 		laser = GetComponent<LineRenderer> ();
 		laser.enabled = false;
 		manager = GetComponentInParent<PlayerManager> ();
 	}
-	
+
 	public override void UseEquipment() {
 		if (manager.Movement) {
 			if (!turnedOn) {
@@ -52,6 +52,7 @@ public class LaserPointer : Equipment {
 					GameObject temp = Instantiate (targetPrefab, hit.point + offset, Quaternion.identity);
 					temp.transform.forward = manager.transform.forward;
 					target = temp.GetComponent<LaserTarget> ();
+					target.Location = manager.Graph.GetIndexFromPosition (hit.point + offset);
 					target.Pointer = this;
 					LaserUninvestigated ();
 					StartCoroutine ("ShootRay", hit.point);

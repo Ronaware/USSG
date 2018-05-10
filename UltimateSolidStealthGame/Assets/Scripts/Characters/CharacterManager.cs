@@ -2,8 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+	Base class of Manager classes
+*/
 public class CharacterManager : MonoBehaviour {
 
+	/*
+		reference to components necessary in all manager subclasses
+	*/
 	protected HealthManager health;
 	protected Graph graph;
 

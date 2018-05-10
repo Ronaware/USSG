@@ -2,18 +2,46 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+	Class that defines player movement ability
+	continues to move player in specified direction until told to stop
+*/
 public class PlayerMovement : MonoBehaviour {
 
+	/*
+		index of vertex player is currently at
+	*/
 	[SerializeField]
 	int currVertexIndex;
 
+	/*
+		index of vertex player was last at
+	*/
 	int lastVertexIndex;
+	/*
+		amount by which player moves per move call
+	*/
 	float moveAmount;
+	/*
+		normalized direction of movement
+	*/
 	Vector3 movement;
+	/*
+		direction of movement
+	*/
 	Enums.directions direction;
+	/*
+		name of player
+	*/
 	string playerName;
 
+	/*
+		reference to PlayerManager component
+	*/
 	PlayerManager manager;
+	/*
+		reference to NavMeshAgent component
+	*/
 	UnityEngine.AI.NavMeshAgent nav;
 
 	public int CurrVertexIndex {
@@ -28,14 +56,13 @@ public class PlayerMovement : MonoBehaviour {
 	public Enums.directions Direction {
 		get { return direction; }
 	}
-
-	// Use this for initialization
+		
 	void Start () {
 		movement = Vector3.zero;
 		manager = GetComponent<PlayerManager> ();
 		moveAmount = manager.Graph.VertexDistance;
 		nav = GetComponent<UnityEngine.AI.NavMeshAgent> ();
-		transform.position = new Vector3(transform.position.x, 0.0f, transform.position.z);
+		//transform.position = new Vector3(transform.position.x, 1.0f, transform.position.z);
 		currVertexIndex = manager.Graph.GetIndexFromPosition(transform.position);
 		lastVertexIndex = currVertexIndex;
 		playerName = gameObject.name;
@@ -59,6 +86,11 @@ public class PlayerMovement : MonoBehaviour {
 		}
 	}
 
+	/*
+		sets new destination for player based on direction of movement specified
+		updates vertex info in graph accordingly
+		player moves in increments of moveAmount per call
+	*/
 	void SetNewDestination() {
 		if (nav && manager && manager.Graph) {
 			if (nav.remainingDistance <= 0.1f) {
@@ -133,6 +165,10 @@ public class PlayerMovement : MonoBehaviour {
 		}
 	}
 
+	/*
+		Sets direction to move in
+		@param dir - direction to move in
+	*/
 	public void MoveUntilStop(Enums.directions dir) {
 		direction = dir;
 		switch (dir) {
@@ -151,6 +187,9 @@ public class PlayerMovement : MonoBehaviour {
 		}
 	}
 
+	/*
+		stops player from continuing movement
+	*/
 	public void StopMoving() {
 		movement = Vector3.zero;
 	}

@@ -2,8 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+	Bullet Class
+*/
 public class Bullet : MonoBehaviour {
 
+	/*
+		Amount of damage bullet does
+	*/
 	float damage;
 
 	public float Damage {

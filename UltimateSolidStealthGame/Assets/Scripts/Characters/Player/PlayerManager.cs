@@ -2,8 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+	Class used to store all Player's components 
+*/
 public class PlayerManager : CharacterManager {
 
+	/*
+		references to player components
+	*/
 	PlayerMovement movement;
 	PlayerWeaponSystem weaponSystem;
 	PlayerUI ui;
@@ -29,7 +35,10 @@ public class PlayerManager : CharacterManager {
 			ui = tempUI.GetComponent<PlayerUI> ();
 		}
 	}
-	
+
+	/*
+		called when player dies to turn off all components
+	*/
 	public override void Kill() {
 		Debug.Log ("Player Dead");
 		movement.enabled = false;

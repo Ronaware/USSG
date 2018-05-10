@@ -3,33 +3,61 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
+	Class to handle displaying and formatting WeaponSelection button wheel
+*/
 public class WeaponSelectWheel : MonoBehaviour {
 
+	/*
+		radius of button wheel
+	*/
 	float wheelRadius;
 
+	/*
+		reference to background circle image
+	*/
 	Image bgCircle;
+	/*
+		list of references to Button gameobjects
+	*/
 	List<GameObject> buttonList;
+	/*
+		number of buttons in list when last displayed
+	*/
 	int lastListSize;
+	/*
+		coordinates of middle of screen
+	*/
 	float midX;
 	float midY;
 
-	// Use this for initialization
 	void Awake () {
 		bgCircle = GetComponent<Image> ();
 		bgCircle.gameObject.SetActive (false);
 		buttonList = new List<GameObject> ();
 		wheelRadius = Screen.height / 3.0f;
 	}
-	
-	// Update is called once per frame
+
 	void Update () {
 		
 	}
 
+	/*
+		add button reference to list
+		@param newButton - reference to Button gameobject
+	*/
 	public void AddButton(GameObject newButton) {
-			buttonList.Add (newButton);
+		buttonList.Add (newButton);
+		newButton.transform.SetParent(transform, false);
+		RectTransform rect = newButton.GetComponent<RectTransform> ();
+		rect.localPosition = Vector3.one;
+		rect.localScale = Vector3.one;
+		newButton.SetActive (false);
 	}
 
+	/*
+		displays wheel and sets button positions based on number of buttons in list
+	*/
 	public void DisplayWheel() {
 		if (lastListSize != buttonList.Count) {
 			lastListSize = buttonList.Count;
@@ -49,6 +77,9 @@ public class WeaponSelectWheel : MonoBehaviour {
 		bgCircle.gameObject.SetActive (true);
 	}
 
+	/*
+		hides wheel
+	*/
 	public void HideWheel() {
 		foreach (GameObject g in buttonList) {
 			g.SetActive (false);

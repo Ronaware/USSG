@@ -12,6 +12,7 @@ public class VertexDisplay : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		startColor.a = 0.2f;
 		mesh = GetComponent<MeshRenderer> ();
 		if (mesh) {
 			mesh.material.color = startColor;
@@ -28,10 +29,10 @@ public class VertexDisplay : MonoBehaviour {
 				foreach (int i in vert.adjacentVertices) {
 					Debug.Log ("    adjacent : " + i);
 				}
-				Debug.Log (" ");
+				Debug.Log ("--------------------------------------------------------");
 			} else if (Input.GetMouseButtonDown(0)) {
 				Debug.Log (vert.index);
-				Debug.Log (" ");
+				Debug.Log ("--------------------------------------------------------");
 			}
 		}
 	}

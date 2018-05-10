@@ -2,12 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+	Class used to maintain references to all enemy components
+	Used by components to access one another
+*/
 public class EnemyManager : CharacterManager {
 
+	/*
+		references to major Enemy components
+	*/
 	EnemyMovement movement;
 	EnemySight sight;
 	EnemyWeaponSystem weaponSystem;
 	EnemyDistraction distraction;
+	EnemySightPlane plane;
+	/*
+		reference to player GameObject
+	*/
 	GameObject player;
 
 	public EnemyMovement Movement {
@@ -29,13 +40,16 @@ public class EnemyManager : CharacterManager {
 
 	protected override void Awake () {
 		base.Awake ();
-		movement = GetComponent<EnemyMovement> ();
 		sight = GetComponent<EnemySight> ();
 		weaponSystem = GetComponent<EnemyWeaponSystem> ();
 		distraction = GetComponent<EnemyDistraction>();
+		plane = GetComponent<EnemySightPlane> ();
 		player = GameObject.FindGameObjectWithTag ("Player");
 	}
-	
+
+	/*
+		Called to turn off all components when enemy is killed
+	*/
 	public override void Kill() {
 		Debug.Log ("Enemy Dead");
 		graph.vertices[movement.CurrVertexIndex].occupied = false;
@@ -48,6 +62,7 @@ public class EnemyManager : CharacterManager {
 		health.enabled = false;
 		distraction.enabled = false;
 		movement.Nav.enabled = false;
+		Destroy (plane);
 		GetComponent<Collider> ().enabled = false;
 	}
 }

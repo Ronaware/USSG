@@ -7,7 +7,6 @@ public class LaserTarget : MonoBehaviour {
 	[SerializeField]
 	int location;
 
-	Graph graph;
 	LaserPointer pointer;
 
 	public int Location {
@@ -19,9 +18,6 @@ public class LaserTarget : MonoBehaviour {
 	}
 		
 	void Start () {
-		//transform.position = new Vector3(transform.position.x, 0.0f, transform.position.z);
-		graph = GameObject.FindGameObjectWithTag ("Graph").GetComponent<Graph> ();
-		location = graph.GetIndexFromPosition (transform.position);
 	}
 
 	void OnDestroy() {

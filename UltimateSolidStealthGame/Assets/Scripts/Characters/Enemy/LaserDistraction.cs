@@ -2,19 +2,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+	Subclass of EnemyDistraction class
+	Used to detect whether a laser pointer distraction is in range
+	If one is found, set path to it
+*/
 public class LaserDistraction : EnemyDistraction {
 
 	public override void Start () {
 		base.Start ();
-		nonDistractionLayers = 1 << LayerMask.NameToLayer ("Laser");
+		distractionLayers = 1 << LayerMask.NameToLayer ("Laser");
 	}
 
 	protected override void LateUpdate() {
 		base.LateUpdate ();
 	}
 
+	/*
+	 	Uses Physics.Checksphere to detect any laser pointer in range
+	 	if one is found, check whether there is direct line of sight to distraction
+	 	if it is in the line of sight, set path to laser
+	*/
 	protected override void CheckForDistraction () {
-		Collider[] hits = Physics.OverlapSphere (transform.position, checkRadius, nonDistractionLayers, QueryTriggerInteraction.Collide);
+		Collider[] hits = Physics.OverlapSphere (transform.position, checkRadius, distractionLayers, QueryTriggerInteraction.Collide);
 		foreach (Collider hit in hits) {
 			if (!Physics.Linecast (transform.position, hit.transform.position, manager.Sight.IgnoreEnemiesLayer, QueryTriggerInteraction.Ignore)) {
 				LaserTarget target = hit.GetComponent<LaserTarget> ();
@@ -27,19 +37,12 @@ public class LaserDistraction : EnemyDistraction {
 	}
 
 	public override void SetDistraction (int vertex, ref GameObject obj) {
-		if (!manager.Sight.Alerted && vertex >= 0) {
-			distraction = obj;
-			distracted = true;
-			pathToDistraction = manager.Graph.FindShortestPath (manager.Movement.CurrVertexIndex, vertex);
-			if (pathToDistraction.Count > 0) {
-				manager.Movement.Path = pathToDistraction;
-			}
-		}
+		base.SetDistraction (vertex, ref obj);
 	}
 
 	protected override IEnumerator AtDistraction () {
-		//laser animation
 		manager.Movement.Turn(distraction.transform.forward);
+		//laser animation
 		Destroy(distraction);
 		yield return new WaitForSeconds (distractionTime);
 		distracted = false;

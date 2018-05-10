@@ -2,24 +2,47 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/*
+	Class that allows enemy to fire at player based on equipped weapon
+*/
 public class EnemyWeaponSystem : MonoBehaviour {
 
+	/*
+		prefab of weapon object
+	*/
 	[SerializeField]
 	GameObject gunPrefab;
+	/*
+		time between calls of fire to wait before calling fire again
+	*/
 	[SerializeField]
 	float fireWaitTime = 2.0f;
 
+	/*
+		whether weapon is currently being fired
+	*/
 	bool firing;
 
+	/*
+		reference to EnemyManager component
+	*/
 	EnemyManager manager;
+	/*
+		instance of gunPrefab
+	*/
 	GameObject gunInstance;
+	/*
+		reference to Gun component of gunInstance
+	*/
 	Gun gun;
-	Renderer renderer;
+	/*
+		reference to enemy' MeshRenderer component
+	*/
+	MeshRenderer renderer;
 
-	// Use this for initialization
 	void Start () {
 		manager = GetComponent<EnemyManager> ();
-		renderer = GetComponent<Renderer> ();
+		renderer = GetComponent<MeshRenderer> ();
 		if (gunPrefab) {
 			gunInstance = GameObject.Instantiate (gunPrefab, transform);
 			if (gunInstance != null) {
@@ -39,6 +62,10 @@ public class EnemyWeaponSystem : MonoBehaviour {
 		FireWeapon ();
 	}
 
+	/*
+		fires weapon if specified time had passed, weapon is not currently firing, and the enemy is visible in the camera
+		if player is directly in front of enemy and enemy is looking in one of the cardinal directions, fire weapon
+	*/
 	public void FireWeapon() {
 		if (!firing && renderer.isVisible) {
 			if (manager.Sight && manager.Player && manager.Movement && gun) {
@@ -59,6 +86,9 @@ public class EnemyWeaponSystem : MonoBehaviour {
 		}
 	}
 
+	/*
+		coroutine to prevent enemy from firing for specified time
+	*/
 	IEnumerator FirePause() {
 		yield return new WaitForSeconds (fireWaitTime);
 		firing = false;

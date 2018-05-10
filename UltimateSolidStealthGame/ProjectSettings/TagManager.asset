@@ -8,6 +8,8 @@ TagManager:
   - Enemy
   - Bullet
   - UI
+  - SaveLoad
+  - Floor
   layers:
   - Default
   - TransparentFX
