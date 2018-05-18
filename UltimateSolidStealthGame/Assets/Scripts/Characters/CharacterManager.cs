@@ -7,9 +7,12 @@ using UnityEngine;
 */
 public class CharacterManager : MonoBehaviour {
 
-	/*
+    /*
 		reference to components necessary in all manager subclasses
 	*/
+    [SerializeField]
+    GameObject graphObject;
+
 	protected HealthManager health;
 	protected Graph graph;
 
@@ -22,9 +25,8 @@ public class CharacterManager : MonoBehaviour {
 		
 	protected virtual void Awake () {
 		health = GetComponent<HealthManager> ();
-		GameObject tempGraph = GameObject.FindGameObjectWithTag ("Graph");
-		if (tempGraph) {
-			graph = tempGraph.GetComponent<Graph> ();
+		if (graphObject) {
+			graph = graphObject.GetComponent<Graph> ();
 		}
 	}
 	

@@ -25,7 +25,7 @@ public class CigarettePack : MonoBehaviour {
 	}
 
 	void Start () {
-		transform.position = new Vector3(transform.position.x, 0.0f, transform.position.z);
+		//transform.position = new Vector3(transform.position.x, 1.0f, transform.position.z);
 		transform.Rotate (new Vector3(0, Random.Range(0, 360), 0));
 		//graph = GameObject.FindGameObjectWithTag ("Graph").GetComponent<Graph> ();
 		//location = graph.GetIndexFromPosition (transform.position);

@@ -89,4 +89,10 @@ public class EnemySightPlane : MonoBehaviour {
 		sightPlaneMesh.vertices = newVerts.ToArray ();
 		sightPlaneMesh.triangles = newIndices.ToArray ();
 	}
+
+    void OnDisable() {
+        if (sightPlane) {
+            Destroy(sightPlane);
+        }
+    }
 }

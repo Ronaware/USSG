@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour {
 
@@ -14,6 +15,7 @@ public class LevelManager : MonoBehaviour {
 	string nextLevel;
 
 	PlayerManager manager;
+    int playerCurrLevel;
 
 	public string LevelName {
 		get { return LevelName; }
@@ -24,10 +26,10 @@ public class LevelManager : MonoBehaviour {
 		foreach (GameObject e in equipmentForLevel) {
 			manager.WeaponSystem.AddEquipment (e);
 		}
-		int currLevel = PlayerPrefs.GetInt ("CurrentLevel", -1);
-		if (currLevel != -1) {
-			if (currLevel < level) {
-				Time.timeScale = 0.0f;
+		playerCurrLevel = PlayerPrefs.GetInt ("CurrentLevel", -1);
+		if (playerCurrLevel != -1) {
+			if (playerCurrLevel < level) {
+				
 
 				//Play level introduction ui animation
 			}
@@ -37,7 +39,13 @@ public class LevelManager : MonoBehaviour {
 	void Update () {}
 
 	public void FinishLevel() {
-		//play finish level ui animation
-		//Set new playerpref currentlevel
+        //play finish level ui animation
+        //Set new playerpref currentlevel
+        if (nextLevel != "") {
+            if (playerCurrLevel < level) {
+				PlayerPrefs.SetInt ("CurrentLevel", level);
+            }
+			SceneManager.LoadScene(nextLevel);
+        }
 	}
 }

@@ -41,6 +41,7 @@ public class EnemyManager : CharacterManager {
 	protected override void Awake () {
 		base.Awake ();
 		sight = GetComponent<EnemySight> ();
+		movement = GetComponent<EnemyMovement> ();
 		weaponSystem = GetComponent<EnemyWeaponSystem> ();
 		distraction = GetComponent<EnemyDistraction>();
 		plane = GetComponent<EnemySightPlane> ();
@@ -62,7 +63,7 @@ public class EnemyManager : CharacterManager {
 		health.enabled = false;
 		distraction.enabled = false;
 		movement.Nav.enabled = false;
-		Destroy (plane);
+        plane.enabled = false;
 		GetComponent<Collider> ().enabled = false;
 	}
 }

@@ -12,60 +12,65 @@ public class EnemyMovement : MonoBehaviour {
 		time enemy should pause when they reach patrol point
 	*/
 	[SerializeField]
-	int pauseLength;
+	protected int pauseLength;
 	/*
 		current vertex in graph that enemy is at
 	*/
 	[SerializeField]
-	int currVertexIndex;
+    protected int currVertexIndex;
 	/*
 		list of indices of vertices that the enemy should patrol between
 	*/
 	[SerializeField]
-	List<int> patrolVertices = new List<int> ();
+    protected List<int> patrolVertices = new List<int> ();
 	/*
 		used for debugging, shows path enemy is currently traveling along
 	*/
 	[SerializeField]
-	bool showDebug;
+    protected bool showDebug;
 
-	/*
+    /*
 		index of vertex that the enemy was last at
 	*/
-	int lastVertexIndex;
-	/*
+    protected int lastVertexIndex;
+    /*
 		index of patrol vertex that the enemy should move to next
 	*/
-	int destPatrolIndex;
-	/*
+    protected int destPatrolIndex;
+    /*
 		primary path that defines path along which the enemy moves, either between patrols, to distractions, or to player
 	*/
-	List<int> path;
-	/*
+    protected List<int> path;
+    /*
 		current direction enemy is facing
 	*/
-	Enums.directions direction;
-	/*
+    protected Enums.directions direction;
+    /*
 		enemy name
 	*/
-	string enemyName;
-	/*
+    protected string enemyName;
+    /*
 		last direction that the enemy moved in
 		used to determine if enemy changed directions
 	*/
-	Vector3 lastMoveDir;
+    protected Vector3 lastMoveDir;
 
-	/*
+    /*
 		reference to EnemyManager component
 	*/
-	EnemyManager manager;
-	/*
+    protected EnemyManager manager;
+    /*
 		reference to NavMeshAgent component
 	*/
-	UnityEngine.AI.NavMeshAgent nav;
+    protected UnityEngine.AI.NavMeshAgent nav;
+    /*
+        number of times attempts to go to next patrol point should be made before changing patrol points
+    */
+    int maxPatrolTries = 50;
+    int numPatrolTries;
 
 
-	public int CurrVertexIndex {
+    public int CurrVertexIndex {
 		get { return currVertexIndex; }
 	}
 	public int LastVertexIndex {
@@ -79,18 +84,18 @@ public class EnemyMovement : MonoBehaviour {
 		get { return nav; }
 	}
 
-	void Start() {
+	protected void Start() {
 		manager = GetComponent<EnemyManager> ();
 		nav = GetComponent<UnityEngine.AI.NavMeshAgent> ();
 		path = new List<int> ();
-		//transform.position = new Vector3(transform.position.x, 1.0f, transform.position.z);
 		currVertexIndex = manager.Graph.GetIndexFromPosition (transform.position);
 		lastVertexIndex = currVertexIndex;
 		lastMoveDir = transform.forward;
 		enemyName = gameObject.name;
 		manager.Graph.vertices [currVertexIndex].occupiedBy = enemyName;
 		manager.Graph.vertices [currVertexIndex].occupied = true;
-		if (patrolVertices.Count > 0) {
+        manager.Graph.vertices[currVertexIndex].NotifyParentOrChild();
+        if (patrolVertices.Count > 0) {
 			path = manager.Graph.FindShortestPath (currVertexIndex, patrolVertices [0]);
 		}
 	}
@@ -100,9 +105,9 @@ public class EnemyMovement : MonoBehaviour {
 		returns enemy to patrol if they are not alerted or distracted
 		if showDebug == true, show path enemy is on
 	*/
-	void Update() {
+	protected void Update() {
 		if (manager && manager.Graph.Ready) {
-			if (!manager.Sight.Alerted) {
+			if (manager.Sight && !manager.Sight.Alerted) {
 				if (manager.Distraction && !manager.Distraction.Distracted) {
 					BackToPatrol ();
 				} else if (!manager.Distraction) {
@@ -115,7 +120,7 @@ public class EnemyMovement : MonoBehaviour {
 			if (showDebug) {
 				foreach (int i in path) {
 					Vector3 pos = manager.Graph.vertices [i].position;
-					Debug.DrawLine (pos, pos + Vector3.up, Color.red, 0.01f);
+					Debug.DrawLine (pos, pos + (Vector3.up * 5.0f), Color.red, 0.01f);
 				}
 			}
 		} 
@@ -124,19 +129,24 @@ public class EnemyMovement : MonoBehaviour {
 	/*
 		Sets new destination patrol vertex if enemy has reached current patrol
 	*/
-	void OnPatrol() {
-		if (!manager.Sight.Alerted && patrolVertices.Count > 1) {
-			int patrolIndexInGraph = patrolVertices [destPatrolIndex];
-			Vertex v = manager.Graph.vertices[patrolIndexInGraph];
-			float currX = transform.position.x;
-			float currZ = transform.position.z;
-			float destX = v.position.x;
-			float destZ = v.position.z;
-			if (Mathf.Approximately(currX, destX) && Mathf.Approximately(currZ, destZ)) {
-				destPatrolIndex = (destPatrolIndex + 1) % patrolVertices.Count;
-				PauseMovement ();
-			}
-		}
+	protected void OnPatrol() {
+        if (patrolVertices.Count > 1) {
+            if ((manager.Sight && !manager.Sight.Alerted) || !manager.Sight) {
+                if ((manager.Distraction && !manager.Distraction.Distracted) || !manager.Distraction) {
+                    int patrolIndexInGraph = patrolVertices[destPatrolIndex];
+                    Vertex v = manager.Graph.vertices[patrolIndexInGraph];
+                    float currX = transform.position.x;
+                    float currZ = transform.position.z;
+                    float destX = v.position.x;
+                    float destZ = v.position.z;
+                    //if (Mathf.Approximately(currX, destX) && Mathf.Approximately(currZ, destZ)) {
+                    if ((Mathf.Abs(destX - currX) <= nav.stoppingDistance) && (Mathf.Abs(destZ - currZ) <= nav.stoppingDistance)) {
+                        destPatrolIndex = (destPatrolIndex + 1) % patrolVertices.Count;
+                        PauseMovement();
+                    }
+                }
+            }
+        }
 	}
 
 	/*
@@ -146,7 +156,7 @@ public class EnemyMovement : MonoBehaviour {
 		if path.Count >= 2, turn in direction of next vertex in path if it is in a different direction
 		update currVertex according to direction moved in
 	*/
-	void TravelBetweenPathPoints() {      
+	protected virtual void TravelBetweenPathPoints() {      
 		if (path.Count > 0) {
 			Vertex v = manager.Graph.vertices [path [0]];
 			float currX = transform.position.x;
@@ -158,10 +168,12 @@ public class EnemyMovement : MonoBehaviour {
 					if (manager.Graph.vertices [lastVertexIndex].occupiedBy == enemyName) {
 						manager.Graph.vertices [lastVertexIndex].occupied = false;
 						manager.Graph.vertices [lastVertexIndex].occupiedBy = "";
-					}
+                        manager.Graph.vertices[lastVertexIndex].NotifyParentOrChild();
+                    }
 					manager.Graph.vertices [currVertexIndex].occupied = true;
 					manager.Graph.vertices [currVertexIndex].occupiedBy = enemyName;
-				}
+                    manager.Graph.vertices[currVertexIndex].NotifyParentOrChild();
+                }
 				Vector3 moveDir;
 				if (path.Count >= 2) {
 					if (manager.Graph.vertices [path [1]].occupied) { 
@@ -192,9 +204,11 @@ public class EnemyMovement : MonoBehaviour {
 					}
 					manager.Graph.vertices [lastVertexIndex].occupied = true;
 					manager.Graph.vertices [lastVertexIndex].occupiedBy = enemyName;
-					manager.Graph.vertices [currVertexIndex].occupied = true;
+                    manager.Graph.vertices[lastVertexIndex].NotifyParentOrChild();
+                    manager.Graph.vertices [currVertexIndex].occupied = true;
 					manager.Graph.vertices [currVertexIndex].occupiedBy = enemyName;
-					nav.SetDestination (manager.Graph.vertices [path [0]].position);
+                    manager.Graph.vertices[currVertexIndex].NotifyParentOrChild();
+                    nav.SetDestination (manager.Graph.vertices [path [0]].position);
 				}
 			}
 		}
@@ -202,13 +216,22 @@ public class EnemyMovement : MonoBehaviour {
 
 	/*
 		sets path to next patrol point
+        continue trying if path cannot be created until successful or number of tries reaches maxPatrolTries
+        else go to next patrol point
 	*/
 	public void BackToPatrol() {
 		if (patrolVertices.Count > 0) {
 			List<int> newPath = manager.Graph.FindShortestPath (currVertexIndex, patrolVertices [destPatrolIndex]);
 			if (newPath.Count > 0) {
-				path = newPath;
-			}
+                numPatrolTries = 0;
+                path = newPath;
+			} else {
+                numPatrolTries++;
+                if (numPatrolTries == maxPatrolTries) {
+                    numPatrolTries = 0;
+                    destPatrolIndex = (destPatrolIndex + 1) % patrolVertices.Count;
+                }
+            }
 		}
 	}
 
@@ -236,7 +259,6 @@ public class EnemyMovement : MonoBehaviour {
 		enabled = true;
 	}
 
-	//TODO make magic numbers variables
 	/*
 		turns enemy in direction
 		@param dir - direction enemy should turn in
