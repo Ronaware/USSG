@@ -1,0 +1,13 @@
+sceneSetups:
+- path: Assets/Scenes/Level_01.unity
+  isLoaded: 0
+  isActive: 0
+- path: Assets/Scenes/Level_02.unity
+  isLoaded: 0
+  isActive: 0
+- path: Assets/Scenes/Cigarette_Tutorial.unity
+  isLoaded: 0
+  isActive: 0
+- path: Assets/Scenes/Level_03.unity
+  isLoaded: 1
+  isActive: 1
